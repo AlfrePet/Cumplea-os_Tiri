@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff5f8">
+  <title>Nuestros recuerdos · Tiri</title>
+
+  <style>
+    :root {
+      --fondo: #fff8fa;
+      --rosa: #984c69;
+      --texto: #694352;
+      --borde: #e8c8d4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 0% 0%, #f8dfe9, transparent 40%),
+        var(--fondo);
+      color: var(--texto);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    body.visor-abierto {
+      overflow: hidden;
+    }
+
+    .navegacion {
+      width: min(100% - 40px, 1100px);
+      margin: 28px auto 0;
+    }
+
+    .regresar {
+      display: inline-block;
+      padding: 8px 0;
+      color: var(--rosa);
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .regresar:hover {
+      text-decoration: underline;
+    }
+
+    .cabecera {
+      padding: 40px 24px 45px;
+      text-align: center;
+    }
+
+    .fecha {
+      margin: 0 0 20px;
+      color: var(--rosa);
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      letter-spacing: 3px;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--rosa);
+      font-family: "Segoe Script", "Brush Script MT", cursive;
+      font-size: clamp(32px, 6vw, 54px);
+      font-weight: normal;
+      line-height: 1.5;
+    }
+
+    .corazones {
+      margin: 18px 0;
+      color: #c77898;
+      font-size: 22px;
+      letter-spacing: 9px;
+    }
+
+    .subtitulo {
+      max-width: 450px;
+      margin: 0 auto;
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .indicacion {
+      margin: 18px 0 0;
+      color: #946675;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .galeria {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 28px;
+      width: min(100% - 48px, 1100px);
+      margin: 0 auto;
+      padding: 8px 0 30px;
+    }
+
+    .foto {
+      display: block;
+      width: 100%;
+      padding: 12px 12px 18px;
+      border: 1px solid #ecd9e0;
+      border-radius: 3px;
+      background: #fffdfc;
+      color: var(--rosa);
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(105, 67, 82, 0.08);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .foto:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 14px 32px rgba(105, 67, 82, 0.14);
+    }
+
+    .foto img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      background: #f9eaf0;
+    }
+
+    .numero {
+      display: block;
+      margin-top: 15px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 16px;
+      letter-spacing: 3px;
+    }
+
+    .final {
+      padding: 30px 24px 55px;
+      text-align: center;
+    }
+
+    .final p {
+      margin: 0 0 22px;
+      color: #946675;
+      font-size: 17px;
+    }
+
+    .boton {
+      display: inline-block;
+      padding: 17px 42px;
+      border: 1px solid var(--rosa);
+      border-radius: 999px;
+      background: var(--rosa);
+      color: white;
+      text-decoration: none;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .boton:hover {
+      background: #7e3c55;
+      transform: translateY(-3px);
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid var(--rosa);
+      outline-offset: 5px;
+    }
+
+    footer {
+      padding: 0 20px 28px;
+      color: #946675;
+      text-align: center;
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+
+    .visor {
+      width: min(94vw, 1100px);
+      max-height: 94vh;
+      max-height: 94svh;
+      padding: 18px;
+      border: 1px solid var(--borde);
+      border-radius: 12px;
+      background: #fffdfc;
+      color: var(--texto);
+      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.2);
+    }
+
+    .visor::backdrop {
+      background: rgba(49, 25, 35, 0.8);
+    }
+
+    .barra-visor {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .titulo-visor {
+      margin: 0;
+      color: var(--rosa);
+      font-size: 18px;
+      font-weight: normal;
+    }
+
+    .cerrar {
+      flex-shrink: 0;
+      padding: 10px 16px;
+      border: 1px solid var(--borde);
+      border-radius: 999px;
+      background: #fff5f8;
+      color: var(--rosa);
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+    }
+
+    .cerrar:hover {
+      background: #f8e1ea;
+    }
+
+    .imagen-ampliada {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 75vh;
+      max-height: 75svh;
+      object-fit: contain;
+    }
+
+    @media (max-width: 850px) {
+      .galeria {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 22px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .navegacion {
+        width: calc(100% - 30px);
+        margin-top: 18px;
+      }
+
+      .cabecera {
+        padding: 30px 20px;
+      }
+
+      .galeria {
+        width: calc(100% - 28px);
+        gap: 14px;
+      }
+
+      .foto {
+        padding: 7px 7px 12px;
+      }
+
+      .numero {
+        margin-top: 10px;
+        font-size: 13px;
+      }
+
+      .corazones {
+        letter-spacing: 6px;
+      }
+
+      .visor {
+        padding: 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .foto,
+      .boton {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navegacion" aria-label="Navegación">
+    <a class="regresar" href="dedicatoria.html">
+      ← Volver a la dedicatoria
+    </a>
+  </nav>
+
+  <main>
+    <header class="cabecera">
+      <p class="fecha">PARA TI · TIRI</p>
+      <h1>Nuestros recuerdos</h1>
+
+      <div class="corazones" aria-hidden="true">♡ ♡ ♥ ♡ ♡</div>
+
+      <p class="subtitulo">
+        Hay momentos que merecen quedarse para siempre.
+      </p>
+
+      <p class="indicacion">
+        Toca una foto para verla completa y más grande.
+      </p>
+    </header>
+
+    <section class="galeria" aria-label="Álbum de fotos">
+      <button class="foto" type="button" aria-label="Ampliar foto 1">
+        <img src="imagenes/P1.jpg" alt="Foto 1 de nuestro álbum" loading="lazy">
+        <span class="numero" aria-hidden="true">01 ♡</span>
+      </button>
+
+      <button class="foto" type="button" aria-label="Ampliar foto 2">
+        <img src="imagenes/P2.jpg" alt="Foto 2 de nuestro álbum" loading="lazy">
+        <span class="numero" aria-hidden="true">02 ♡</span>
+      </button>
+
+      <button class="foto" type="button" aria-label="Ampliar foto 3">
+        <img src="imagenes/P3.jpg" alt="Foto 3 de nuestro álbum" loading="lazy">
+        <span class="numero" aria-hidden="true">03 ♡</span>
+      </button>
+
+      <button class="foto" type="button" aria-label="Ampliar foto 4">
+        <img src="imagenes/P4.jpg" alt="Foto 4 de nuestro álbum" loading="lazy">
+        <span class="numero" aria-hidden="true">04 ♡</span>
+      </button>
+
+      <button class="foto" type="button" aria-label="Ampliar foto 5">
+        <img src="imagenes/P5.jpg" alt="Foto 5 de nuestro álbum" loading="lazy">
+        <span class="numero" aria-hidden="true">05 ♡</span>
+      </button>
+
+      <button class="foto" type="button" aria-label="Ampliar foto 6">
+        <img src="imagenes/P6.jpg" alt="Foto 6 de nuestro álbum" loading="lazy">
+        <span class="numero" aria-hidden="true">06 ♡</span>
+      </button>
+
+      <button class="foto" type="button" aria-label="Ampliar foto 7">
+        <img src="imagenes/P7.jpg" alt="Foto 7 de nuestro álbum" loading="lazy">
+        <span class="numero" aria-hidden="true">07 ♡</span>
+      </button>
+
+      <button class="foto" type="button" aria-label="Ampliar foto 8">
+        <img src="imagenes/P8.jpg" alt="Foto 8 de nuestro álbum" loading="lazy">
+        <span class="numero" aria-hidden="true">08 ♡</span>
+      </button>
+
+      <button class="foto" type="button" aria-label="Ampliar foto 9">
+        <img src="imagenes/P9.jpg" alt="Foto 9 de nuestro álbum" loading="lazy">
+        <span class="numero" aria-hidden="true">09 ♡</span>
+      </button>
+
+      <button class="foto" type="button" aria-label="Ampliar foto 10">
+        <img src="imagenes/P10.jpg" alt="Foto 10 de nuestro álbum" loading="lazy">
+        <span class="numero" aria-hidden="true">10 ♡</span>
+      </button>
+
+      <button class="foto" type="button" aria-label="Ampliar foto 11">
+        <img src="imagenes/P11.jpg" alt="Foto 11 de nuestro álbum" loading="lazy">
+        <span class="numero" aria-hidden="true">11 ♡</span>
+      </button>
+
+      <button class="foto" type="button" aria-label="Ampliar foto 12">
+        <img src="imagenes/P12.jpg" alt="Foto 12 de nuestro álbum" loading="lazy">
+        <span class="numero" aria-hidden="true">12 ♡</span>
+      </button>
+
+      <button class="foto" type="button" aria-label="Ampliar foto 13">
+        <img src="imagenes/P13.jpg" alt="Foto 13 de nuestro álbum" loading="lazy">
+        <span class="numero" aria-hidden="true">13 ♡</span>
+      </button>
+
+      <button class="foto" type="button" aria-label="Ampliar foto 14">
+        <img src="imagenes/P14.jpg" alt="Foto 14 de nuestro álbum" loading="lazy">
+        <span class="numero" aria-hidden="true">14 ♡</span>
+      </button>
+    </section>
+
+    <div class="final">
+      <p>Volver al principio ♡</p>
+      <a class="boton" href="index.html">HEREEE!!</a>
+    </div>
+  </main>
+
+  <footer>Para Tiri · Con mucho amor ♡</footer>
+
+  <dialog class="visor" id="visor" aria-labelledby="titulo-visor">
+    <div class="barra-visor">
+      <h2 class="titulo-visor" id="titulo-visor">Nuestro recuerdo</h2>
+      <button class="cerrar" id="cerrar" type="button" autofocus>
+        Cerrar ✕
+      </button>
+    </div>
+
+    <img class="imagen-ampliada" id="imagen-ampliada" alt="">
+  </dialog>
+
+  <script>
+    const visor = document.getElementById("visor");
+    const imagenAmpliada = document.getElementById("imagen-ampliada");
+    const tituloVisor = document.getElementById("titulo-visor");
+    const cerrar = document.getElementById("cerrar");
+    const fotos = document.querySelectorAll(".foto");
+
+    fotos.forEach((boton, indice) => {
+      boton.addEventListener("click", () => {
+        const imagen = boton.querySelector("img");
+
+        imagenAmpliada.src = imagen.src;
+        imagenAmpliada.alt = imagen.alt;
+        tituloVisor.textContent = "Nuestro recuerdo · " + (indice + 1);
+
+        visor.showModal();
+        document.body.classList.add("visor-abierto");
+      });
+    });
+
+    cerrar.addEventListener("click", () => {
+      visor.close();
+    });
+
+    visor.addEventListener("click", (evento) => {
+      if (evento.target !== visor) return;
+
+      const limites = visor.getBoundingClientRect();
+
+      const fuera =
+        evento.clientX < limites.left ||
+        evento.clientX > limites.right ||
+        evento.clientY < limites.top ||
+        evento.clientY > limites.bottom;
+
+      if (fuera) {
+        visor.close();
+      }
+    });
+
+    visor.addEventListener("close", () => {
+      document.body.classList.remove("visor-abierto");
+      imagenAmpliada.removeAttribute("src");
+    });
+  </script>
+</body>
+</html>

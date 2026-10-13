@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff5f8">
+  <title>Una dedicatoria para Tiri</title>
+
+  <style>
+    :root {
+      --fondo: #fff8fa;
+      --rosa: #984c69;
+      --texto: #694352;
+      --borde: #e8c8d4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--texto);
+      background:
+        radial-gradient(ellipse at 0% 0%, #f8dfe9, transparent 45%),
+        radial-gradient(ellipse at 100% 100%, #f4d7e3, transparent 45%),
+        var(--fondo);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .navegacion {
+      width: min(100% - 40px, 820px);
+      margin: 28px auto 0;
+    }
+
+    .regresar {
+      display: inline-block;
+      padding: 8px 0;
+      color: var(--rosa);
+      text-decoration: none;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+    }
+
+    .regresar:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      padding: 25px 20px 55px;
+    }
+
+    .carta {
+      position: relative;
+      width: min(100%, 820px);
+      margin: 0 auto;
+      padding: clamp(30px, 7vw, 75px);
+      border: 1px solid var(--borde);
+      background: #fffdfc;
+      box-shadow: 0 20px 65px rgba(105, 67, 82, 0.07);
+      animation: aparecer 0.9s ease both;
+    }
+
+    .carta::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border: 1px solid #f2e1e7;
+      pointer-events: none;
+    }
+
+    .cabecera {
+      position: relative;
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .flor {
+      display: block;
+      width: 95px;
+      height: 125px;
+      margin: 0 auto 20px;
+    }
+
+    .fecha {
+      margin: 0 0 20px;
+      color: var(--rosa);
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      letter-spacing: 3px;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--rosa);
+      font-family: "Segoe Script", "Brush Script MT", cursive;
+      font-size: clamp(32px, 6vw, 48px);
+      font-weight: normal;
+      line-height: 1.5;
+    }
+
+    .corazones {
+      margin: 22px 0 0;
+      color: #c77898;
+      font-size: 21px;
+      letter-spacing: 9px;
+    }
+
+    .texto {
+      position: relative;
+      font-size: clamp(17px, 2.5vw, 20px);
+      line-height: 1.95;
+      overflow-wrap: break-word;
+    }
+
+    .texto p {
+      margin: 0 0 26px;
+    }
+
+    .texto p:last-child {
+      margin-bottom: 0;
+    }
+
+    .texto strong {
+      color: var(--rosa);
+      font-weight: bold;
+    }
+
+    .final {
+      position: relative;
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 1px solid var(--borde);
+      text-align: center;
+    }
+
+    .boton {
+      display: inline-block;
+      padding: 17px 42px;
+      border: 1px solid var(--rosa);
+      border-radius: 999px;
+      background: var(--rosa);
+      color: white;
+      text-decoration: none;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      box-shadow: 0 8px 25px rgba(152, 76, 105, 0.15);
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .boton:hover {
+      background: #7e3c55;
+      transform: translateY(-3px);
+    }
+
+    a:focus-visible {
+      outline: 3px solid var(--rosa);
+      outline-offset: 6px;
+    }
+
+    footer {
+      padding: 0 20px 28px;
+      color: #946675;
+      text-align: center;
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+
+    @keyframes aparecer {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 20px 14px 35px;
+      }
+
+      .carta {
+        padding: 35px 25px;
+      }
+
+      .navegacion {
+        width: calc(100% - 30px);
+        margin-top: 18px;
+      }
+
+      .corazones {
+        letter-spacing: 6px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .carta {
+        animation: none;
+      }
+
+      .boton {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navegacion" aria-label="Navegación">
+    <a class="regresar" href="index.html">← Volver a la portada</a>
+  </nav>
+
+  <main>
+    <article class="carta" aria-labelledby="titulo">
+      <header class="cabecera">
+        <svg
+          class="flor"
+          viewBox="0 0 300 400"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient
+              id="petalo"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%"
+            >
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="65%" stop-color="#fff0f5"/>
+              <stop offset="100%" stop-color="#eeb8ce"/>
+            </linearGradient>
+          </defs>
+
+          <path
+            d="M150 170 Q140 280 165 390"
+            fill="none"
+            stroke="#8b997a"
+            stroke-width="5"
+          />
+
+          <path
+            d="M148 290 Q76 278 70 221 Q130 238 148 290Z"
+            fill="#a9b499"
+          />
+
+          <path
+            d="M153 325 Q225 290 230 243 Q172 270 153 325Z"
+            fill="#8f9e80"
+          />
+
+          <g fill="url(#petalo)" stroke="#d9a9bb" stroke-width="1.5">
+            <path d="M150 170 Q104 101 145 24 Q191 103 150 170Z"/>
+            <path d="M150 170 Q163 88 257 62 Q238 149 150 170Z"/>
+            <path d="M150 170 Q225 128 286 180 Q208 216 150 170Z"/>
+            <path d="M150 170 Q215 215 196 297 Q141 247 150 170Z"/>
+            <path d="M150 170 Q128 242 44 266 Q59 192 150 170Z"/>
+            <path d="M150 170 Q70 168 23 84 Q109 88 150 170Z"/>
+          </g>
+
+          <g fill="none" stroke="#e5afc4" stroke-width="1.4">
+            <path d="M150 170 Q142 106 145 52"/>
+            <path d="M150 170 Q195 117 237 82"/>
+            <path d="M150 170 Q214 169 261 181"/>
+            <path d="M150 170 Q173 222 189 271"/>
+            <path d="M150 170 Q105 216 66 246"/>
+            <path d="M150 170 Q91 137 44 104"/>
+          </g>
+
+          <g fill="none" stroke="#9d8d57" stroke-width="2">
+            <path d="M150 170 Q136 143 125 120"/>
+            <path d="M150 170 Q160 141 173 115"/>
+            <path d="M150 170 Q177 155 195 143"/>
+            <path d="M150 170 Q134 160 108 148"/>
+          </g>
+
+          <g fill="#b69555">
+            <ellipse
+              cx="125" cy="120" rx="4" ry="8"
+              transform="rotate(-25 125 120)"
+            />
+            <ellipse
+              cx="173" cy="115" rx="4" ry="8"
+              transform="rotate(25 173 115)"
+            />
+            <ellipse
+              cx="195" cy="143" rx="4" ry="8"
+              transform="rotate(55 195 143)"
+            />
+            <ellipse
+              cx="108" cy="148" rx="4" ry="8"
+              transform="rotate(-55 108 148)"
+            />
+          </g>
+
+          <circle cx="150" cy="170" r="6" fill="#c39b6b"/>
+        </svg>
+
+        <p class="fecha">25 · OCTUBRE</p>
+        <h1 id="titulo">Para ti, Tiri</h1>
+        <div class="corazones" aria-hidden="true">♡ ♡ ♥ ♡ ♡</div>
+      </header>
+
+      <div class="texto">
+        <p>
+          En este día tan hermoso, en el que naciste, tan especial para ti
+          y para todos los que te amamos, queremos y apreciamos muchísimo,
+          llegas al segundo escalón de la vida. En él afrontarás muchísimos
+          retos: algunos complicados, otros fáciles y otros que parecerán
+          imposibles. Pero siempre podrás encontrar una salida, una manera
+          de resolverlos, como lo has hecho hasta ahora.
+        </p>
+
+        <p>
+          Estoy muy orgulloso de todo lo que has intentado y logrado, y
+          también de las veces en las que has fallado a lo largo de tu vida.
+          Sé que tendrás muchísimos éxitos y espero poder acompañarte en
+          cada uno de ellos y apoyarte en lo que necesites. Nunca estarás
+          sola: siempre me tendrás a tu lado, aconsejándote y dándote otro
+          punto de vista.
+        </p>
+
+        <p>
+          Todos los que estamos a tu alrededor somos afortunados. Eres una
+          excelente <strong>HIJA, HERMANA y AMIGA</strong>, y eres la
+          <strong>MEJOR NOVIA Y ACOMPAÑANTE</strong>.
+        </p>
+
+        <p>
+          A lo largo de todos estos años conociéndote, he aprendido mucho
+          de ti, de tus fortalezas y de tus debilidades. Cada una de esas
+          cosas te hace ser Luisana: no dejarte llevar por lo que dicen
+          los demás ni sentirte obligada a compartir una opinión. Siempre
+          defiendes a tu país y, aunque las cosas estén complicadas,
+          nunca agachas la cabeza.
+        </p>
+      </div>
+
+      <div class="final">
+        <a class="boton" href="fotos.html">HEREEE!!</a>
+      </div>
+    </article>
+  </main>
+
+  <footer>Para Tiri · Con mucho amor ♡</footer>
+</body>
+</html>
