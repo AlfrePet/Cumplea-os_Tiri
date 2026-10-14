@@ -284,6 +284,61 @@
         transition: none;
       }
     }
+
+    [hidden] { display: none !important; }
+    .boton { cursor: pointer; }
+    .volver-portada { padding: 0 20px 35px; text-align: center; }
+    .camara-dialogo {
+      width: min(94vw, 720px);
+      max-height: 94vh;
+      max-height: 94svh;
+      padding: clamp(20px, 4vw, 35px);
+      overflow: auto;
+      border: 1px solid var(--borde);
+      border-radius: 16px;
+      background: #fffdfc;
+      color: var(--texto);
+      text-align: center;
+    }
+    .camara-dialogo::backdrop { background: rgba(49, 25, 35, 0.8); }
+    .camara-dialogo h2 {
+      margin: 0 0 15px;
+      color: var(--rosa);
+      font-size: clamp(25px, 5vw, 36px);
+      font-weight: normal;
+    }
+    .mensaje-camara { margin: 12px 0; line-height: 1.65; }
+    .cuenta {
+      margin: 18px 0;
+      color: var(--rosa);
+      font-size: clamp(24px, 5vw, 36px);
+    }
+    .video-recuerdo, .foto-recuerdo {
+      display: block;
+      width: 100%;
+      max-height: 52vh;
+      max-height: 52svh;
+      margin: 15px auto;
+      border-radius: 8px;
+      object-fit: contain;
+      transform: none;
+    }
+    .acciones-camara {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .acciones-camara .boton { padding: 13px 22px; letter-spacing: 0.5px; }
+    .nota-camara {
+      margin: 20px 0 0;
+      color: #946675;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
   </style>
 </head>
 
@@ -382,9 +437,13 @@
       </button>
     </section>
 
-    <div class="final">
-      <p>Volver al principio ♡</p>
-      <a class="boton" href="index.html">HEREEE!!</a>
+    <section class="final" id="final-sorpresa" hidden aria-label="Una sorpresa final">
+      <p>Nos falta un último recuerdo de este día ♡</p>
+      <button class="boton" id="sorpresa" type="button">Sorpresa</button>
+    </section>
+
+    <div class="volver-portada">
+      <a class="regresar" href="index.html">← Volver a la portada</a>
     </div>
   </main>
 
@@ -401,50 +460,281 @@
     <img class="imagen-ampliada" id="imagen-ampliada" alt="">
   </dialog>
 
+
+  <dialog class="camara-dialogo" id="camara-dialogo" aria-labelledby="titulo-camara">
+    <h2 id="titulo-camara">Foto de recuerdo ♡</h2>
+    <p class="mensaje-camara" id="mensaje-camara" role="status">
+      Permite usar la cámara frontal. Al aceptar, comienza una cuenta de
+      cinco segundos y se toma una foto que podrás guardar.
+    </p>
+    <p class="cuenta" id="cuenta" hidden aria-live="polite" aria-atomic="true"></p>
+    <video class="video-recuerdo" id="video-recuerdo" autoplay muted playsinline hidden
+      aria-label="Vista de la cámara frontal"></video>
+    <img class="foto-recuerdo" id="foto-recuerdo" alt="Tu foto de recuerdo" hidden>
+    <div class="acciones-camara">
+      <a class="boton" id="guardar-foto" download="Foto-de-recuerdo-Tiri.png" hidden>Guardar foto</a>
+      <button class="cerrar" id="repetir-foto" type="button" hidden>Tomar otra</button>
+      <button class="cerrar" id="cerrar-camara" type="button" autofocus>Cancelar</button>
+    </div>
+    <p class="nota-camara">La foto se queda en este dispositivo. Tú decides si quieres guardarla.</p>
+  </dialog>
+
   <script>
+
     const visor = document.getElementById("visor");
     const imagenAmpliada = document.getElementById("imagen-ampliada");
     const tituloVisor = document.getElementById("titulo-visor");
     const cerrar = document.getElementById("cerrar");
     const fotos = document.querySelectorAll(".foto");
+    const finalSorpresa = document.getElementById("final-sorpresa");
+    const sorpresa = document.getElementById("sorpresa");
+
+    const camaraDialogo = document.getElementById("camara-dialogo");
+    const mensajeCamara = document.getElementById("mensaje-camara");
+    const cuenta = document.getElementById("cuenta");
+    const video = document.getElementById("video-recuerdo");
+    const resultado = document.getElementById("foto-recuerdo");
+    const guardarFoto = document.getElementById("guardar-foto");
+    const repetirFoto = document.getElementById("repetir-foto");
+    const cerrarCamara = document.getElementById("cerrar-camara");
+
+    let ultimaAbierta = false;
+    let flujo = null;
+    let sesion = 0;
+    let reloj = null;
+    let cancelarEspera = null;
+    let fotoURL = null;
+
+    function actualizarBloqueo() {
+      document.body.classList.toggle("visor-abierto", visor.open || camaraDialogo.open);
+    }
 
     fotos.forEach((boton, indice) => {
       boton.addEventListener("click", () => {
         const imagen = boton.querySelector("img");
-
         imagenAmpliada.src = imagen.src;
         imagenAmpliada.alt = imagen.alt;
         tituloVisor.textContent = "Nuestro recuerdo · " + (indice + 1);
-
+        ultimaAbierta = indice === fotos.length - 1;
         visor.showModal();
-        document.body.classList.add("visor-abierto");
+        actualizarBloqueo();
       });
     });
 
-    cerrar.addEventListener("click", () => {
-      visor.close();
-    });
+    cerrar.addEventListener("click", () => visor.close());
 
     visor.addEventListener("click", (evento) => {
       if (evento.target !== visor) return;
-
       const limites = visor.getBoundingClientRect();
-
-      const fuera =
-        evento.clientX < limites.left ||
-        evento.clientX > limites.right ||
-        evento.clientY < limites.top ||
-        evento.clientY > limites.bottom;
-
-      if (fuera) {
-        visor.close();
-      }
+      const fuera = evento.clientX < limites.left || evento.clientX > limites.right ||
+        evento.clientY < limites.top || evento.clientY > limites.bottom;
+      if (fuera) visor.close();
     });
 
     visor.addEventListener("close", () => {
-      document.body.classList.remove("visor-abierto");
+      actualizarBloqueo();
       imagenAmpliada.removeAttribute("src");
+      if (ultimaAbierta) {
+        finalSorpresa.hidden = false;
+        finalSorpresa.scrollIntoView({ block: "center" });
+        sorpresa.focus({ preventScroll: true });
+      }
+      ultimaAbierta = false;
     });
+
+    function detenerCamara() {
+      if (reloj !== null) window.clearTimeout(reloj);
+      reloj = null;
+      if (cancelarEspera) cancelarEspera();
+      cancelarEspera = null;
+      if (flujo) flujo.getTracks().forEach((pista) => pista.stop());
+      flujo = null;
+      video.pause();
+      video.srcObject = null;
+    }
+
+    function descartarFoto() {
+      if (fotoURL) URL.revokeObjectURL(fotoURL);
+      fotoURL = null;
+      resultado.removeAttribute("src");
+      guardarFoto.removeAttribute("href");
+      resultado.hidden = true;
+      guardarFoto.hidden = true;
+    }
+
+    function vigente(numeroSesion) {
+      return numeroSesion === sesion && camaraDialogo.open;
+    }
+
+    function esperarImagen(numeroSesion) {
+      if (video.readyState >= 2 && video.videoWidth && video.videoHeight) {
+        return Promise.resolve(true);
+      }
+      return new Promise((resolve, reject) => {
+        let tiempo;
+        function limpiar() {
+          window.clearTimeout(tiempo);
+          video.removeEventListener("loadeddata", comprobar);
+          video.removeEventListener("playing", comprobar);
+          cancelarEspera = null;
+        }
+        function comprobar() {
+          if (!vigente(numeroSesion)) {
+            limpiar();
+            resolve(false);
+          } else if (video.readyState >= 2 && video.videoWidth && video.videoHeight) {
+            limpiar();
+            resolve(true);
+          }
+        }
+        cancelarEspera = () => { limpiar(); resolve(false); };
+        video.addEventListener("loadeddata", comprobar);
+        video.addEventListener("playing", comprobar);
+        tiempo = window.setTimeout(() => {
+          limpiar();
+          reject(new Error("La cámara no pudo mostrar una imagen. Inténtalo de nuevo."));
+        }, 12000);
+        comprobar();
+      });
+    }
+
+    function mostrarError(error, numeroSesion) {
+      if (!vigente(numeroSesion)) return;
+      detenerCamara();
+      video.hidden = true;
+      cuenta.hidden = true;
+      repetirFoto.hidden = false;
+      repetirFoto.textContent = "Reintentar";
+      cerrarCamara.textContent = "Cerrar";
+      if (error.name === "NotAllowedError" || error.name === "SecurityError") {
+        mensajeCamara.textContent = "La cámara necesita tu permiso. Puedes permitirla en los ajustes del navegador y volver a intentarlo.";
+      } else if (error.name === "NotFoundError" || error.name === "OverconstrainedError") {
+        mensajeCamara.textContent = "No encontré una cámara frontal disponible. Prueba desde tu teléfono.";
+      } else if (error.name === "NotReadableError") {
+        mensajeCamara.textContent = "No pude iniciar la cámara. Cierra otras aplicaciones que puedan estar usándola y vuelve a intentarlo.";
+      } else {
+        mensajeCamara.textContent = error.message || "No pude preparar la foto. Puedes intentarlo de nuevo.";
+      }
+    }
+
+    async function tomarFoto(numeroSesion) {
+      if (!vigente(numeroSesion)) return;
+      if (video.readyState < 2 || !video.videoWidth || !video.videoHeight) {
+        mostrarError(new Error("La cámara perdió la imagen. Inténtalo otra vez."), numeroSesion);
+        return;
+      }
+      try {
+        const lienzo = document.createElement("canvas");
+        lienzo.width = video.videoWidth;
+        lienzo.height = video.videoHeight;
+        const contexto = lienzo.getContext("2d");
+        if (!contexto) throw new Error("Este navegador no pudo preparar la foto.");
+
+        // Captura el fotograma original, sin reflejarlo ni recortarlo.
+        contexto.drawImage(video, 0, 0, lienzo.width, lienzo.height);
+        detenerCamara();
+        video.hidden = true;
+        cuenta.hidden = true;
+        mensajeCamara.textContent = "Preparando tu recuerdo…";
+
+        const archivo = await new Promise((resolve) => lienzo.toBlob(resolve, "image/png"));
+        if (!vigente(numeroSesion)) return;
+        if (!archivo) throw new Error("No pude guardar la imagen. Inténtalo de nuevo.");
+        fotoURL = URL.createObjectURL(archivo);
+        resultado.src = fotoURL;
+        guardarFoto.href = fotoURL;
+        resultado.hidden = false;
+        guardarFoto.hidden = false;
+        repetirFoto.hidden = false;
+        repetirFoto.textContent = "Tomar otra";
+        cerrarCamara.textContent = "Cerrar";
+        mensajeCamara.textContent = "Un recuerdo de este día, solo para ti ♡";
+      } catch (error) {
+        mostrarError(error, numeroSesion);
+      }
+    }
+
+    function iniciarCuenta(numeroSesion) {
+      let segundos = 5;
+      cuenta.hidden = false;
+      mensajeCamara.textContent = "¡Prepárate! Puedes cancelar antes de que se tome la foto.";
+      function paso() {
+        if (!vigente(numeroSesion)) return;
+        if (segundos === 0) {
+          reloj = null;
+          void tomarFoto(numeroSesion);
+          return;
+        }
+        cuenta.textContent = "Foto de recuerdo en " + segundos + "…";
+        segundos -= 1;
+        reloj = window.setTimeout(paso, 1000);
+      }
+      paso();
+    }
+
+    async function comenzarFoto() {
+      const numeroSesion = ++sesion;
+      detenerCamara();
+      descartarFoto();
+      video.hidden = true;
+      cuenta.hidden = true;
+      repetirFoto.hidden = true;
+      cerrarCamara.textContent = "Cancelar";
+      mensajeCamara.textContent = "Permite usar la cámara frontal. Al aceptar, comienza una cuenta de cinco segundos y se toma una foto que podrás guardar.";
+      if (!camaraDialogo.open) camaraDialogo.showModal();
+      actualizarBloqueo();
+      cerrarCamara.focus();
+      if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+        mostrarError(new Error("Abre este regalo desde su enlace HTTPS en Chrome o Safari para usar la cámara."), numeroSesion);
+        return;
+      }
+      try {
+        const nuevoFlujo = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: {
+            facingMode: { exact: "user" },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          }
+        });
+        if (!vigente(numeroSesion)) {
+          nuevoFlujo.getTracks().forEach((pista) => pista.stop());
+          return;
+        }
+        flujo = nuevoFlujo;
+        video.srcObject = flujo;
+        video.hidden = false;
+        mensajeCamara.textContent = "Preparando la cámara frontal…";
+        await video.play();
+        if (!vigente(numeroSesion)) return;
+        const lista = await esperarImagen(numeroSesion);
+        if (!lista || !vigente(numeroSesion)) return;
+        iniciarCuenta(numeroSesion);
+      } catch (error) {
+        mostrarError(error, numeroSesion);
+      }
+    }
+
+    sorpresa.addEventListener("click", comenzarFoto);
+    repetirFoto.addEventListener("click", comenzarFoto);
+    cerrarCamara.addEventListener("click", () => camaraDialogo.close());
+    camaraDialogo.addEventListener("close", () => {
+      sesion += 1;
+      detenerCamara();
+      descartarFoto();
+      cuenta.hidden = true;
+      video.hidden = true;
+      actualizarBloqueo();
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && camaraDialogo.open) camaraDialogo.close();
+    });
+    window.addEventListener("pagehide", () => {
+      sesion += 1;
+      detenerCamara();
+      descartarFoto();
+    });
+
   </script>
 </body>
 </html>
